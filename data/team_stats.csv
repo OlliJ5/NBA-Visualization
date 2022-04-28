@@ -1,4 +1,4 @@
-Rk,Team,Age,W,L,PW,PL,MOV,SOS,SRS,ORtg,DRtg,NRtg,Pace,FTr,3PAr,TS%,,eFG%,TOV%,ORB%,FT/FGA,,eFG%,TOV%,DRB%,FT/FGA,,Arena,Attend.,Attend./G,Logo,Conference,Playoff
+Rk,Team,Age,W,L,PW,PL,MOV,SOS,SRS,ORtg,DRtg,NRtg,Pace,FTr,3PAr,TS%,,eFG%,TOV%,ORB%,FT/FGA,,eFG%,TOV%,DRB%,FT/FGA,,Arena,Attend.,Attend./G,Logo,Conference,Playoff_status
 1,Boston Celtics,26.1,51,31,59,23,7.28,-0.26,7.02,114.4,106.9,+7.5,96.6,.239,.425,.578,,.542,12.4,24.0,.195,,.502,12.5,77.3,.183,,TD Garden,727928,17754,celtics_logo.png,East,Playoff
 2,Phoenix Suns,27.5,64,18,59,23,7.50,-0.56,6.94,114.8,107.3,+7.5,99.8,.221,.354,.581,,.549,11.6,22.3,.176,,.510,13.0,77.1,.195,,Phoenix Suns Arena,663171,16175,suns_logo.png,West,Playoff
 3,Utah Jazz,29.3,49,33,56,26,6.04,-0.37,5.67,116.7,110.5,+6.2,97.1,.271,.468,.589,,.555,12.7,25.4,.208,,.521,10.9,78.3,.164,,Vivint Smart Home Arena,750546,18306,jazz_logo.png,West,Playoff
@@ -29,3 +29,4 @@ Rk,Team,Age,W,L,PW,PL,MOV,SOS,SRS,ORtg,DRtg,NRtg,Pace,FTr,3PAr,TS%,,eFG%,TOV%,OR
 28,Oklahoma City Thunder,22.4,24,58,21,61,-8.10,0.20,-7.90,104.6,112.8,-8.2,98.5,.223,.419,.530,,.497,12.5,21.8,.169,,.533,11.8,76.1,.169,,Paycom Center,595112,14515,thunder_logo.png,West,Lottery
 29,Houston Rockets,24.1,20,62,21,61,-8.48,0.22,-8.26,108.4,116.7,-8.3,100.9,.284,.448,.565,,.534,14.5,21.7,.202,,.554,12.3,74.4,.206,,Toyota Center,638977,15585,rockets_logo.png,West,Lottery
 30,Portland Trail Blazers,25.6,27,55,20,62,-8.88,0.33,-8.55,107.8,116.9,-9.1,98.3,.248,.422,.550,,.515,13.0,22.9,.188,,.559,12.7,76.9,.222,,Moda Center,705608,17210,blazers_logo.png,West,Lottery
+,League Average,26.3,,,41,41,0.00,0.00,0.00,112.0,112.0,,98.2,.248,.399,.566,,.532,12.3,23.2,.192,,.532,12.3,76.8,.192,,,693702,16920

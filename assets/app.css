@@ -1,0 +1,32 @@
+body {
+  font-family: "Montserrat", sans-serif;
+  margin: 3% 5%;
+}
+
+.sub-header {
+  color: rgb(99, 99, 99);
+}
+
+.main-container {
+  padding: 1rem 0;
+  border: 1px solid black;
+}
+
+.graphContainer-left {
+  width: 75%;
+  display: inline-block;
+  padding: 0 20;
+  vertical-align: top;
+}
+
+.graphContainer-right {
+  width: 25%;
+  display: inline-block;
+  padding: 2.5% 0;
+  vertical-align: top;
+}
+
+.filter-header {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+}

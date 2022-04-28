@@ -4,5 +4,7 @@
 
 
 [] division filter properly
-[] radiobuttons -> checkboxes?
 [] figure out on click data to show
+[x] radiobuttons -> checkboxes?
+[x] average line
+[x] axis doesn't change, it's set
