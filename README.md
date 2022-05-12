@@ -3,8 +3,8 @@
 ## TO DO
 
 
-[] division filter properly
-[] figure out on click data to show
-[x] radiobuttons -> checkboxes?
-[x] average line
-[x] axis doesn't change, it's set
+[x] axis bug
+[x] On click data
+    [x] Rating by game
+[] Heroku hosting
+[] make prettier

@@ -10,7 +10,7 @@ app = Dash(__name__)
 df = pd.read_csv("./data/team_stats.csv")
 teams = df.iloc[0:30]
 avg_team = df.iloc[30:31]
-team_ratings = teams[["Team", "ORtg", "DRtg", "Logo", "Conference", "Playoff_status"]]
+team_ratings = teams[["Team", "Abb", "ORtg", "DRtg", "Logo", "Conference", "Playoff_status"]]
 
 app.layout = html.Div(children=[
     html.H1(children='NBA Regular Season 21-22'),
@@ -23,7 +23,7 @@ app.layout = html.Div(children=[
         html.Div([
             dcc.Graph(
                 id='team-ratings-graph',
-                clickData={'points': [{'hovertext': 'New York Knicks'}]}
+                # clickData={'points': [{'hovertext': 'New York Knicks'}]}
             )
         ], className="graphContainer-left"),
 
@@ -56,8 +56,11 @@ app.layout = html.Div(children=[
 
 
     html.Div([
-        html.H2(id='click-data'),
-    ], className="team-container")
+        html.H2(id='click-data-header', className="team-header"),
+        dcc.Graph(
+            id='team-games-graph'
+        )
+    ], id="team-section", style={'display': 'none'})
 
 ])
 
@@ -80,9 +83,9 @@ def update_graph(conference_list, playoff_status_list):
     # )
 
     ratings_fig = px.scatter(team_ratings_filtered,
-                             x="ORtg", y="DRtg", hover_name="Team")
+                             x="ORtg", y="DRtg", hover_name="Team", custom_data=["Abb"])
 
-    # ratings_fig.update_layout(yaxis_range=[105, 119], xaxis_range=[103, 118])
+    ratings_fig.update_layout(yaxis_range=[105, 119], xaxis_range=[103, 118])
 
     ratings_fig.add_shape(type='line',
                           x0=0,
@@ -125,11 +128,30 @@ def update_graph(conference_list, playoff_status_list):
 
 
 @app.callback(
-    Output('click-data', 'children'),
+    Output('click-data-header', 'children'),
+    Output('team-games-graph', 'figure'),
+    Output('team-section', 'style'),
     Input('team-ratings-graph', 'clickData'))
 def display_click_data(clickData):
     print(clickData)
-    return clickData["points"][0]["hovertext"]
+    
+    if clickData is None:
+        header = ""
+        visibility = {'display': 'none'}
+        fig = {}
+    else:
+        team_abb = clickData["points"][0]["customdata"][0]
+        
+        header = "{} ({})".format(clickData["points"][0]["hovertext"], team_abb)
+        visibility = {'display': 'block'}
+        
+        game_logs = pd.read_csv(f'./data/game_logs/{team_abb.lower()}_log.csv')
+        game_logs = game_logs[["G", "ORtg", "DRtg"]]
+        game_logs["NRtg"] = game_logs.apply(lambda row: row.ORtg - row.DRtg, axis=1)
+        print(game_logs)
+        fig = px.line(game_logs, x="G", y="NRtg")
+
+    return header, fig, visibility
 
 
 if __name__ == '__main__':
