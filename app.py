@@ -11,20 +11,20 @@ server = app.server
 df = pd.read_csv("./data/team_stats.csv")
 teams = df.iloc[0:30]
 avg_team = df.iloc[30:31]
-team_ratings = teams[["Team", "Abb", "ORtg", "DRtg", "Logo", "Conference", "Playoff_status"]]
+team_ratings = teams[["Team", "Abb", "ORtg", "DRtg",
+                      "Conference", "Playoff_status", "W", "L"]]
 
 app.layout = html.Div(children=[
     html.H1(children='NBA Regular Season 21-22'),
 
     html.P('Visualizing statistics from the 21-22 NBA regular season. Click on a team to show further information about them.', className="sub-header"),
     html.P('Below the teams are represented by their offensive and defensive ratings. I.e. Points scored and points allowed per 100 posessions respectively.', className="sub-header"),
-    
+
 
     html.Div([
         html.Div([
             dcc.Graph(
-                id='team-ratings-graph',
-                # clickData={'points': [{'hovertext': 'New York Knicks'}]}
+                id='team-ratings-graph'
             )
         ], className="graphContainer-left"),
 
@@ -45,22 +45,24 @@ app.layout = html.Div(children=[
                 inline=True,
                 id='playoff-filter',
                 labelStyle={'padding': '0.5rem 1.5em 0 0'}
-            ),
-
-            # html.P('Division', className="radio-header"),
-            # dcc.Dropdown(
-            #     ['Atlantic', 'Central', 'Southeast', 'Pacific'],
-            #     id='division-filter'
-            # )
+            )
         ], className="graphContainer-right")
     ], className="main-container"),
 
 
     html.Div([
         html.H2(id='click-data-header', className="team-header"),
-        dcc.Graph(
-            id='team-games-graph'
-        )
+        html.Div([
+            html.Div([
+                html.Img(id='click-data-logo', className="logo"),
+                html.P(id='click-data-record')
+            ], className="team-container-left"),
+            html.Div([
+                dcc.Graph(
+                    id='team-games-graph'
+                )
+            ], className="team-container-right")
+        ], className="team-container")
     ], id="team-section", style={'display': 'none'})
 
 ])
@@ -72,19 +74,19 @@ app.layout = html.Div(children=[
     Input('playoff-filter', 'value')
 )
 def update_graph(conference_list, playoff_status_list):
-    team_ratings_filtered = team_ratings[team_ratings['Conference'].isin(conference_list)]
+    team_ratings_filtered = team_ratings[team_ratings['Conference'].isin(
+        conference_list)]
 
-    team_ratings_filtered = team_ratings_filtered[team_ratings_filtered['Playoff_status'].isin(playoff_status_list)]
-
-    # ratings_fig = go.Figure(
-    #     data=go.Scatter(x=team_ratings_filtered["ORtg"],
-    #                     y=team_ratings_filtered["DRtg"],
-    #                     mode='markers',
-    #                     text=team_ratings_filtered["Team"])
-    # )
+    team_ratings_filtered = team_ratings_filtered[team_ratings_filtered['Playoff_status'].isin(
+        playoff_status_list)]
 
     ratings_fig = px.scatter(team_ratings_filtered,
-                             x="ORtg", y="DRtg", hover_name="Team", custom_data=["Abb"])
+                             x="ORtg", y="DRtg", hover_name="Team", custom_data=["Abb"],
+                             labels={
+                                 "ORtg": "Offensive Rating",
+                                 "DRtg": "Defensive Rating"
+                             }
+                             )
 
     ratings_fig.update_layout(yaxis_range=[105, 119], xaxis_range=[103, 118])
 
@@ -109,8 +111,8 @@ def update_graph(conference_list, playoff_status_list):
                           )
 
     for i, row in team_ratings_filtered.iterrows():
-        logo_path = row["Logo"]
-        team_logo = Image.open(f"./data/logos/{logo_path}")
+        logo_path = row["Abb"]
+        team_logo = Image.open(f"./assets/logos/{logo_path.lower()}_logo.png")
         size = 128, 128
         team_logo.thumbnail(size, Image.ANTIALIAS)
         ratings_fig.add_layout_image(
@@ -132,29 +134,32 @@ def update_graph(conference_list, playoff_status_list):
     Output('click-data-header', 'children'),
     Output('team-games-graph', 'figure'),
     Output('team-section', 'style'),
+    Output('click-data-logo', 'src'),
+    Output('click-data-record', 'children'),
     Input('team-ratings-graph', 'clickData'))
 def display_click_data(clickData):
-    print(clickData)
-    
     if clickData is None:
         header = ""
         visibility = {'display': 'none'}
         fig = {}
+        source = ""
+        record = ""
     else:
         team_abb = clickData["points"][0]["customdata"][0]
-        
-        header = "{} ({})".format(clickData["points"][0]["hovertext"], team_abb)
+
+        header = "{} ({})".format(
+            clickData["points"][0]["hovertext"], team_abb)
         visibility = {'display': 'block'}
-        
+
         game_logs = pd.read_csv(f'./data/game_logs/{team_abb.lower()}_log.csv')
-        game_logs = game_logs[["G", "ORtg", "DRtg", "W/L"]]
-        game_logs["NRtg"] = game_logs.apply(lambda row: row.ORtg - row.DRtg, axis=1)
-        
+        game_logs = game_logs[["G", "ORtg", "DRtg", "W/L", "Opp"]]
+        game_logs["NRtg"] = game_logs.apply(
+            lambda row: row.ORtg - row.DRtg, axis=1)
+
         game_logs["NRtgAVG"] = game_logs["NRtg"].cumsum()
-        game_logs["NRtgAVG"] = game_logs.apply(lambda row: row.NRtgAVG / row.G, axis=1)
-        print(game_logs)
-        
-        #fig = px.line(game_logs, x="G", y="NRtgAVG", markers=True)
+        game_logs["NRtgAVG"] = game_logs.apply(
+            lambda row: row.NRtgAVG / row.G, axis=1)
+
         colorsIdx = {'W': 'rgb(4, 189, 17)', 'L': 'rgb(228, 30, 30)'}
         cols = game_logs["W/L"].map(colorsIdx)
         fig = go.Figure()
@@ -163,11 +168,26 @@ def display_click_data(clickData):
             y=game_logs["NRtgAVG"],
             mode='lines+markers',
             marker=dict(size=10,
-                    color=cols)
+                        color=cols),
+            customdata=game_logs[["W/L", "Opp", "NRtg"]],
+            hovertemplate="<b>Game %{x}</b><br>" +
+            "%{customdata[0]} against %{customdata[1]}<br>" +
+            "Net Rating for the game=%{customdata[2]:.2f}<br>" +
+            "Rolling average of Net Rating=%{y:.2f}<extra></extra>"
         ))
-        
+        fig.update_layout(
+            title="Rolling Average of the Team's Net Rating Throughout 82 Games",
+            xaxis_title="Game",
+            yaxis_title="Net Rating"
+        )
 
-    return header, fig, visibility
+        source = f"/assets/logos/{team_abb.lower()}_logo.png"
+        team = team_ratings.loc[team_ratings['Abb'] == team_abb]
+        wins = team.iloc[0]['W']
+        losses = team.iloc[0]['L']
+        record = f"{int(wins)}W - {int(losses)}L"
+
+    return header, fig, visibility, source, record
 
 
 if __name__ == '__main__':

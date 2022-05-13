@@ -7,6 +7,6 @@
 [x] On click data
     [x] Rating by game
 [x] color based on W/L. Dots also larger
-[] better hover info game log
-[] Heroku hosting
+[x] better hover info game log
+[x] Heroku hosting
 [] make prettier
