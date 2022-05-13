@@ -6,6 +6,7 @@ import pandas as pd
 from PIL import Image
 
 app = Dash(__name__)
+server = app.server
 
 df = pd.read_csv("./data/team_stats.csv")
 teams = df.iloc[0:30]
@@ -146,10 +147,25 @@ def display_click_data(clickData):
         visibility = {'display': 'block'}
         
         game_logs = pd.read_csv(f'./data/game_logs/{team_abb.lower()}_log.csv')
-        game_logs = game_logs[["G", "ORtg", "DRtg"]]
+        game_logs = game_logs[["G", "ORtg", "DRtg", "W/L"]]
         game_logs["NRtg"] = game_logs.apply(lambda row: row.ORtg - row.DRtg, axis=1)
+        
+        game_logs["NRtgAVG"] = game_logs["NRtg"].cumsum()
+        game_logs["NRtgAVG"] = game_logs.apply(lambda row: row.NRtgAVG / row.G, axis=1)
         print(game_logs)
-        fig = px.line(game_logs, x="G", y="NRtg")
+        
+        #fig = px.line(game_logs, x="G", y="NRtgAVG", markers=True)
+        colorsIdx = {'W': 'rgb(4, 189, 17)', 'L': 'rgb(228, 30, 30)'}
+        cols = game_logs["W/L"].map(colorsIdx)
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=game_logs["G"],
+            y=game_logs["NRtgAVG"],
+            mode='lines+markers',
+            marker=dict(size=10,
+                    color=cols)
+        ))
+        
 
     return header, fig, visibility
 
