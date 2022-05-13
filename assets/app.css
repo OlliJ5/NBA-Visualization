@@ -1,15 +1,18 @@
 body {
   font-family: "Montserrat", sans-serif;
   margin: 3% 5%;
+  background-color: #111111;
+  color: white;
+  text-align: center;
 }
 
 .sub-header {
-  color: rgb(99, 99, 99);
+  color: rgb(207, 207, 207);
 }
 
 .main-container {
   padding: 1rem 0;
-  border: 1px solid black;
+  border-bottom: 2px solid white;
 }
 
 .graphContainer-left {
@@ -24,6 +27,7 @@ body {
   display: inline-block;
   padding: 2.5% 0;
   vertical-align: top;
+  text-align: left;
 }
 
 .filter-header {

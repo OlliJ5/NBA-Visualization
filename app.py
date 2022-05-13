@@ -1,3 +1,4 @@
+from re import template
 from dash import Dash, html, dcc
 import plotly.graph_objects as go
 import plotly.express as px
@@ -16,10 +17,9 @@ team_ratings = teams[["Team", "Abb", "ORtg", "DRtg",
 
 app.layout = html.Div(children=[
     html.H1(children='NBA Regular Season 21-22'),
-
     html.P('Visualizing statistics from the 21-22 NBA regular season. Click on a team to show further information about them.', className="sub-header"),
-    html.P('Below the teams are represented by their offensive and defensive ratings. I.e. Points scored and points allowed per 100 posessions respectively.', className="sub-header"),
-
+    html.P(['Data for this project is gathered from ',html.A("Basketball-Reference.com.", href="https://www.basketball-reference.com/")], className="sub-header"),
+    html.P("Offensive Rating = Points scored per 100 posessions. Defensive Rating = Points allowed per 100 posessions. Net Rating = Offensive Rating - Defensive Rating", className="sub-header"),
 
     html.Div([
         html.Div([
@@ -85,7 +85,8 @@ def update_graph(conference_list, playoff_status_list):
                              labels={
                                  "ORtg": "Offensive Rating",
                                  "DRtg": "Defensive Rating"
-                             }
+                             },
+                             template='plotly_dark'
                              )
 
     ratings_fig.update_layout(yaxis_range=[105, 119], xaxis_range=[103, 118])
@@ -95,7 +96,7 @@ def update_graph(conference_list, playoff_status_list):
                           y0=avg_team.iloc[0]['DRtg'],
                           x1=1,
                           y1=avg_team.iloc[0]['DRtg'],
-                          line=dict(color='blue'),
+                          line=dict(color='#3471eb'),
                           xref='paper',
                           yref='y'
                           )
@@ -105,7 +106,7 @@ def update_graph(conference_list, playoff_status_list):
                           y0=0,
                           x1=avg_team.iloc[0]['ORtg'],
                           y1=1,
-                          line=dict(color='blue'),
+                          line=dict(color='#3471eb'),
                           xref='x',
                           yref='paper'
                           )
@@ -178,7 +179,8 @@ def display_click_data(clickData):
         fig.update_layout(
             title="Rolling Average of the Team's Net Rating Throughout 82 Games",
             xaxis_title="Game",
-            yaxis_title="Net Rating"
+            yaxis_title="Net Rating",
+            template="plotly_dark"
         )
 
         source = f"/assets/logos/{team_abb.lower()}_logo.png"
